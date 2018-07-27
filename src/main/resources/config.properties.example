@@ -1,0 +1,7 @@
+
+# \u662F\u5426\u4F7F\u7528\u4EE3\u7406
+useProxy=false
+# \u4EE3\u7406\u670D\u52A1\u5668ip
+proxy.ip=
+# \u4EE3\u7406\u670D\u52A1\u5668\u7AEF\u53E3
+proxy.port=
