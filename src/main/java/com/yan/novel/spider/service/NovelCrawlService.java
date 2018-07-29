@@ -1,5 +1,7 @@
 package com.yan.novel.spider.service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.http.HttpEntity;
@@ -10,9 +12,20 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import com.yan.common.util.PropertiesIOUtil;
+import com.yan.common.util.io.FileUtil;
 
+/**
+ * 
+ * 使用httpclient处理请求
+ * 
+ * 使用jsoup解析html
+ * https://www.cnblogs.com/zerotomax/p/7246815.html
+ */
 public class NovelCrawlService {
 
 	// 是否使用代理
@@ -82,7 +95,7 @@ public class NovelCrawlService {
 		httpget.addHeader("If-None-Match", "80dba87ee723d41:0");
 		httpget.addHeader("Cache-Control", "max-age=0");
 		
-		
+		String content = null;
 		CloseableHttpResponse response = httpclient.execute(httpget);
 		try {
 			HttpEntity entity = response.getEntity();
@@ -97,13 +110,36 @@ public class NovelCrawlService {
 //		        } finally {
 //		            instream.close();
 //		        }
-				
-                System.out.println("Response content: " + EntityUtils.toString(entity, "gbk"));
+				content = EntityUtils.toString(entity, "gbk");
+                System.out.println("Response content: " + content);
+                FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\novel.html", content, "UTF-8");
 		    }
 			
 		} finally {
 		    response.close();
 		}
+		
+		// 使用jsoup解析html内容
+		Document document=Jsoup.parse(content);
+		Element element = document.select("div#maininfo").first();
+		for(Element childElement : element.children()) {
+			System.out.println("#############################");
+			System.out.println(childElement.wholeText());
+		}
+		
+		// 使用jsoup获取章节链接
+		Element chapterListDivElement = document.select("div#list").first();
+		List<Element> chapterLinkElementList = chapterListDivElement.select("a");
+		for(Element linkElement:chapterLinkElementList) {
+			String linkText = linkElement.html();
+			String[] ary = linkText.split("\\s+");
+			System.out.println(Arrays.toString(ary));
+			System.out.println(linkElement.attr("href"));
+		}
+		
+		// 章节链接举例
+		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
+		// 相对路径    /2_2144/1268254.html
 		
 		return null;
 	}
@@ -120,4 +156,6 @@ public class NovelCrawlService {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }
