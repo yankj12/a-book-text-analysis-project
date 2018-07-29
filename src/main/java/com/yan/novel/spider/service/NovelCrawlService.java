@@ -1,11 +1,13 @@
 package com.yan.novel.spider.service;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -46,8 +48,64 @@ public class NovelCrawlService {
 		}
 	}
 	
-	public String crawlNovel(String url) throws Exception{
+	public String crawlNovel(String webRootUrl, String novelUrlToken) throws Exception{
+		String novelUrl = webRootUrl + "/" + novelUrlToken + "/";
+
+		// 请求这个url，获取返回的html内容
+		String content = this.requestUrlByGetMethod(novelUrl);
 		
+		// 使用jsoup解析html内容
+		Document document=Jsoup.parse(content);
+		Element element = document.select("div#maininfo").first();
+		for(Element childElement : element.children()) {
+			System.out.println("#############################");
+			System.out.println(childElement.wholeText());
+		}
+		
+		// 使用jsoup获取章节链接
+		Element chapterListDivElement = document.select("div#list").first();
+		List<Element> chapterLinkElementList = chapterListDivElement.select("a");
+		if(chapterLinkElementList != null) {
+			for(Element linkElement:chapterLinkElementList) {
+				String linkText = linkElement.html();
+				String[] ary = linkText.split("\\s+");
+				System.out.println(Arrays.toString(ary));
+				//  /2_2144/1268254.html
+				String chapterRelativeUrl = linkElement.attr("href");
+				String chapterUrl = webRootUrl + chapterRelativeUrl;
+				System.out.println(chapterRelativeUrl);
+			}
+		}
+		
+		// 章节链接举例
+		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
+		// 相对路径    /2_2144/1268254.html
+		
+		return null;
+	}
+	
+	/**
+	 * 爬取章节内容
+	 * @param chapterUrl
+	 * @return
+	 */
+	public String crawNovelChapter(String chapterUrl) {
+		String html = this.requestUrlByGetMethod(chapterUrl);
+		// 解析html
+		// div id=content
+		Document document=Jsoup.parse(html);
+		Element element = document.select("div#content").first();
+		String chapterContent = element.html();
+		System.out.println(chapterContent);
+		return chapterContent;
+	}
+	
+	/**
+	 * 通过get的方式请求一个url
+	 * @param url
+	 * @return
+	 */
+	public String requestUrlByGetMethod(String url) {
 //		request header
 //		
 //		Host: www.biquge.com.tw
@@ -66,7 +124,7 @@ public class NovelCrawlService {
 		CloseableHttpClient httpclient = null;
 		
         //实例化CloseableHttpClient对象
-        if(useProxy){
+        if(this.useProxy){
         	// 使用代理服务器
         	
         	//设置代理IP、端口、协议（请分别替换）
@@ -96,8 +154,9 @@ public class NovelCrawlService {
 		httpget.addHeader("Cache-Control", "max-age=0");
 		
 		String content = null;
-		CloseableHttpResponse response = httpclient.execute(httpget);
+		CloseableHttpResponse response = null;
 		try {
+			response = httpclient.execute(httpget);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 //		        InputStream instream = entity.getContent();
@@ -111,46 +170,36 @@ public class NovelCrawlService {
 //		            instream.close();
 //		        }
 				content = EntityUtils.toString(entity, "gbk");
-                System.out.println("Response content: " + content);
+//                System.out.println("Response content: " + content);
                 FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\novel.html", content, "UTF-8");
 		    }
 			
-		} finally {
-		    response.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+		    try {
+				if(response != null) {
+					response.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		
-		// 使用jsoup解析html内容
-		Document document=Jsoup.parse(content);
-		Element element = document.select("div#maininfo").first();
-		for(Element childElement : element.children()) {
-			System.out.println("#############################");
-			System.out.println(childElement.wholeText());
-		}
-		
-		// 使用jsoup获取章节链接
-		Element chapterListDivElement = document.select("div#list").first();
-		List<Element> chapterLinkElementList = chapterListDivElement.select("a");
-		for(Element linkElement:chapterLinkElementList) {
-			String linkText = linkElement.html();
-			String[] ary = linkText.split("\\s+");
-			System.out.println(Arrays.toString(ary));
-			System.out.println(linkElement.attr("href"));
-		}
-		
-		// 章节链接举例
-		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
-		// 相对路径    /2_2144/1268254.html
-		
-		return null;
+		return content;
 	}
 	
 	
 	public static void main(String[] args) {
 		// http://www.biquge.com.tw/2_2144/
 		
-		String url = "http://www.biquge.com.tw/2_2144/";
+		String webRootUrl = "http://www.biquge.com.tw";
+		String novelUrlToken = "2_2144";
 		try {
-			new NovelCrawlService().crawlNovel(url);
+			NovelCrawlService novelCrawlService = new NovelCrawlService();
+//			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
+			
+			// http://www.biquge.com.tw/2_2144/1268254.html
+			novelCrawlService.crawNovelChapter("http://www.biquge.com.tw/2_2144/1268254.html");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
