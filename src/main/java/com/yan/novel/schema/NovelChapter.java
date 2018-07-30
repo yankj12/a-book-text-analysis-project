@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class NovelChapter implements Serializable{
 
+	private String novelUrlToken;
+	
 	// 序号
 	private int serialNo;
 	
@@ -25,6 +27,14 @@ public class NovelChapter implements Serializable{
 	// 内容
 	private String chapterContent;
 	
+	public String getNovelUrlToken() {
+		return novelUrlToken;
+	}
+
+	public void setNovelUrlToken(String novelUrlToken) {
+		this.novelUrlToken = novelUrlToken;
+	}
+
 	public int getSerialNo() {
 		return serialNo;
 	}

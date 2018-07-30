@@ -61,6 +61,8 @@ public class NovelCrawlService {
 		
 		//TODO
 		NovelInfo novelInfo = new NovelInfo();
+		novelInfo.setNovelUrlToken(novelUrlToken);
+		
 		// 使用jsoup解析html内容
 		Document document=Jsoup.parse(content);
 		Element element = document.select("div#maininfo").first();
@@ -68,6 +70,34 @@ public class NovelCrawlService {
 			System.out.println("#############################");
 			System.out.println(childElement.wholeText());
 		}
+		// 小说标题、作者、最后更新时间、最后更新章节
+		Element infoElement = element.select("div#info").first();
+		// 标题
+		String novelName = infoElement.child(0).text();
+		novelInfo.setNovelName(novelName);
+		
+		// 作者
+		String authorName = infoElement.child(1).text();
+		String[] ary = authorName.split("[:：]");
+		authorName = (ary != null && ary.length>=2?ary[1]:authorName);
+		novelInfo.setAuthorName(authorName);
+		
+		// 最后更新
+		String lastUpdateTime = infoElement.child(3).text();
+		ary = lastUpdateTime.split("[:：]");
+		lastUpdateTime = (ary != null && ary.length>=2?ary[1]:lastUpdateTime);
+		novelInfo.setLastUpdateTime(lastUpdateTime);
+		
+		// 最新章节
+		String lastUpdateChapterFullName = infoElement.child(4).text();
+		ary = lastUpdateChapterFullName.split("[:：]");
+		lastUpdateChapterFullName = (ary != null && ary.length>=2?ary[1]:lastUpdateChapterFullName);
+		novelInfo.setLastUpdateChapterFullName(lastUpdateChapterFullName);
+		
+		// 小说简介信息
+		Element introElement = element.select("div#intro").first();
+		String novelSummary = introElement.text();
+		novelInfo.setNovelSummary(novelSummary);
 		
 		List<NovelChapter> novelChapters = new ArrayList<NovelChapter>();
 		// 使用jsoup获取章节链接
@@ -77,12 +107,12 @@ public class NovelCrawlService {
 			int serialNo = 1;
 			for(Element linkElement:chapterLinkElementList) {
 				String linkText = linkElement.html();
-				String[] ary = linkText.split("\\s+");
-				System.out.println(Arrays.toString(ary));
+				String[] ary1 = linkText.split("\\s+");
+//				System.out.println(Arrays.toString(ary));
 				//  /2_2144/1268254.html
 				String chapterRelativeUrl = linkElement.attr("href");
 				String chapterUrl = webRootUrl + chapterRelativeUrl;
-				System.out.println(chapterRelativeUrl);
+//				System.out.println(chapterRelativeUrl);
 				
 				// 从章节相对链接中截取章节的urlToken
 				int index = chapterRelativeUrl.lastIndexOf("/");
@@ -90,15 +120,16 @@ public class NovelCrawlService {
 				String chapterUrlToken = chapterRelativeUrl.substring(index+1, index2);
 				
 				NovelChapter chapter = new NovelChapter();
+				chapter.setNovelUrlToken(novelUrlToken);
 				chapter.setSerialNo(serialNo);
 				chapter.setChapterFullName(linkText);
 				chapter.setChapterUrlToken(chapterUrlToken);
 				chapter.setChapterUrl(chapterUrl);
-				if(ary != null && ary.length >= 2){
-					chapter.setChapterSerialName(ary[0].trim());
-					chapter.setChapterName(ary[1].trim());
-				}else if(ary != null && ary.length >= 1){
-					chapter.setChapterName(ary[0].trim());
+				if(ary1 != null && ary1.length >= 2){
+					chapter.setChapterSerialName(ary1[0].trim());
+					chapter.setChapterName(ary1[1].trim());
+				}else if(ary1 != null && ary1.length >= 1){
+					chapter.setChapterName(ary1[0].trim());
 				}
 				
 				novelChapters.add(chapter);
@@ -116,7 +147,7 @@ public class NovelCrawlService {
 				novelChapter.setChapterContent(chapterContent);
 				
 				//TODO 将内容写入到文件中
-				FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\chapter.html", chapterContent, "UTF-8");
+//				FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\chapter.html", chapterContent, "UTF-8");
 				break;
 			}
 		}
