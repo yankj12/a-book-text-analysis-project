@@ -23,6 +23,10 @@ import com.yan.common.util.PropertiesIOUtil;
 import com.yan.common.util.io.FileUtil;
 import com.yan.novel.schema.NovelChapter;
 import com.yan.novel.schema.NovelInfo;
+import com.yan.novel.service.facade.NovelChapterDaoService;
+import com.yan.novel.service.facade.NovelInfoDaoService;
+import com.yan.novel.service.impl.NovelChapterDaoServiceSpringImpl;
+import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
 import com.yan.novel.util.NovelHtmlUtil;
 
 /**
@@ -62,14 +66,15 @@ public class NovelCrawlService {
 		//TODO
 		NovelInfo novelInfo = new NovelInfo();
 		novelInfo.setNovelUrlToken(novelUrlToken);
+		novelInfo.setNovelUrl(novelUrl);
 		
 		// 使用jsoup解析html内容
 		Document document=Jsoup.parse(content);
 		Element element = document.select("div#maininfo").first();
-		for(Element childElement : element.children()) {
-			System.out.println("#############################");
-			System.out.println(childElement.wholeText());
-		}
+//		for(Element childElement : element.children()) {
+//			System.out.println("#############################");
+//			System.out.println(childElement.wholeText());
+//		}
 		// 小说标题、作者、最后更新时间、最后更新章节
 		Element infoElement = element.select("div#info").first();
 		// 标题
@@ -134,23 +139,60 @@ public class NovelCrawlService {
 				
 				novelChapters.add(chapter);
 				serialNo++;
+				
+				System.out.println("获取章节链接:" + chapter.getChapterFullName());
 			}
 		}
+
+		NovelInfoDaoService novelInfoDaoService = new NovelInfoDaoServiceSpringImpl();
+				NovelInfo novelInfoTmp = novelInfoDaoService.queryNovelInfoByNovelUrlToken(novelUrlToken);
+		if(novelInfoTmp != null) {
+			
+		}else {
+			novelInfoDaoService.insertNovelInfo(novelInfo);
+			
+		}
+		
+		NovelChapterDaoService novelChapterDaoService = new NovelChapterDaoServiceSpringImpl();
+		
 		
 		// 章节链接举例
 		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
 		// 相对路径    /2_2144/1268254.html
+		
+		int chapterCount = 1;
+		List<NovelChapter> novelChaptersForSave = new ArrayList<>();
 		if(novelChapters != null){
 			for(NovelChapter novelChapter : novelChapters){
+				System.out.println("请求章节内容:" + novelChapter.getChapterFullName());
+				
 				String novelChapterUrl = novelChapter.getChapterUrl();
 				String chapterContent = this.crawNovelChapter(novelChapterUrl);
 				novelChapter.setChapterContent(chapterContent);
 				
+				novelChaptersForSave.add(novelChapter);
 				//TODO 将内容写入到文件中
 //				FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\chapter.html", chapterContent, "UTF-8");
-				break;
+				
+				// 每100条保存一次
+				if(chapterCount % 100 == 0) {
+					System.out.println("每100条保存一次");
+					novelChapterDaoService.insertBathNovelChapter(novelChaptersForSave);
+					// 清空list
+					novelChaptersForSave.clear();
+				}
+				chapterCount++;
 			}
 		}
+		
+		// 如果集合中还有元素，保存一次
+		if(novelChaptersForSave.size() > 0) {
+			novelChapterDaoService.insertBathNovelChapter(novelChaptersForSave);
+			// 清空list
+			novelChaptersForSave.clear();
+		}
+		System.out.println("保存结束");
+
 		return null;
 	}
 	
@@ -248,6 +290,8 @@ public class NovelCrawlService {
                 
 		    }
 			
+			// 请求最小间隔3s
+//			Thread.sleep(3 * 1000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {

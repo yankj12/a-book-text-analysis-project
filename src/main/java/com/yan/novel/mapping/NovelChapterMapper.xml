@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yan.novel.mapping.NovelChapterMapper">
+	
+    <insert id="insertNovelChapter" parameterType="com.yan.novel.schema.NovelChapter">
+    	insert into NovelChapter 
+    	(novelUrlToken,  serialNo,  chapterUrlToken,  chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
+    	values 
+    	(#{novelUrlToken}, #{serialNo}, #{chapterUrlToken}, #{chapterSerialName}, #{chapterName}, #{chapterFullName}, #{chapterUrl}, #{chapterContent}, #{insertTime}, #{updateTime})
+    </insert>
+    
+    <insert id="insertBathNovelChapter" parameterType="java.util.List">
+    	insert into NovelChapter 
+    	(novelUrlToken,  serialNo,  chapterUrlToken,  chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
+    	values 
+    	<foreach collection="list" item="item" index="index" separator=",">
+            (#{item.novelUrlToken}, #{item.serialNo}, #{item.chapterUrlToken}, #{item.chapterSerialName}, #{item.chapterName}, #{item.chapterFullName}, #{item.chapterUrl}, #{item.chapterContent}, #{item.insertTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+    
+    <select id="queryNovelChapterByNovelUrlTokenAndChapterUrlToken" parameterType="string" resultType="com.yan.novel.schema.NovelChapter">
+    	select * from NovelChapter where novelUrlToken = #{novelUrlToken} and chapterUrlToken = #{chapterUrlToken}
+    </select>
+    
+</mapper>

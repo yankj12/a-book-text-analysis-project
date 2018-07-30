@@ -1,10 +1,17 @@
 package com.yan.novel.schema;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class NovelInfo implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+
+	private Integer id;
+	
 	private String novelUrlToken;
+	
+	private String novelUrl;
 	
 	// 小说名称
 	private String novelName;
@@ -20,6 +27,18 @@ public class NovelInfo implements Serializable{
 	
 	// 简介
 	private String novelSummary;
+
+	private Date insertTime;
+	
+	private Date updateTime;
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getNovelUrlToken() {
 		return novelUrlToken;
@@ -67,6 +86,30 @@ public class NovelInfo implements Serializable{
 
 	public void setNovelSummary(String novelSummary) {
 		this.novelSummary = novelSummary;
+	}
+
+	public Date getInsertTime() {
+		return insertTime;
+	}
+
+	public void setInsertTime(Date insertTime) {
+		this.insertTime = insertTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getNovelUrl() {
+		return novelUrl;
+	}
+
+	public void setNovelUrl(String novelUrl) {
+		this.novelUrl = novelUrl;
 	}
 	
 }

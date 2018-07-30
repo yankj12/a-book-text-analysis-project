@@ -1,9 +1,14 @@
 package com.yan.novel.schema;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class NovelChapter implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+
+	private Integer id;
+	
 	private String novelUrlToken;
 	
 	// 序号
@@ -27,6 +32,18 @@ public class NovelChapter implements Serializable{
 	// 内容
 	private String chapterContent;
 	
+	private Date insertTime;
+	
+	private Date updateTime;
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public String getNovelUrlToken() {
 		return novelUrlToken;
 	}
@@ -89,6 +106,22 @@ public class NovelChapter implements Serializable{
 
 	public void setChapterContent(String chapterContent) {
 		this.chapterContent = chapterContent;
+	}
+
+	public Date getInsertTime() {
+		return insertTime;
+	}
+
+	public void setInsertTime(Date insertTime) {
+		this.insertTime = insertTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 	
 }

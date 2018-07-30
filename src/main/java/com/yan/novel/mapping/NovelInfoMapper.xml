@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yan.novel.mapping.NovelInfoMapper">
+	
+    <insert id="insertNovelInfo" parameterType="com.yan.novel.schema.NovelInfo">
+    	insert into NovelInfo 
+    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, insertTime, updateTime) 
+    	values 
+    	(#{novelUrlToken}, #{novelUrl}, #{novelName}, #{authorName}, #{lastUpdateTime}, #{lastUpdateChapterFullName}, #{novelSummary}, #{insertTime}, #{updateTime})
+    </insert>
+    
+    <insert id="insertBathNovelInfo" parameterType="java.util.List">
+    	insert into NovelInfo 
+    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, insertTime, updateTime) 
+    	values 
+    	<foreach collection="list" item="item" index="index" separator=",">
+            (#{item.novelUrlToken}, #{item.novelUrl}, #{item.novelName}, #{item.authorName}, #{item.lastUpdateTime}, #{item.lastUpdateChapterFullName}, #{item.novelSummary}, #{item.insertTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+    
+    <select id="queryNovelInfoByNovelUrlToken" parameterType="string" resultType="com.yan.novel.schema.NovelInfo">
+    	select * from NovelInfo where novelUrlToken = #{novelUrlToken}
+    </select>
+    
+</mapper>
