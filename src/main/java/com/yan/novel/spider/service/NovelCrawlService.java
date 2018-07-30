@@ -1,6 +1,7 @@
 package com.yan.novel.spider.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -20,6 +21,9 @@ import org.jsoup.nodes.Element;
 
 import com.yan.common.util.PropertiesIOUtil;
 import com.yan.common.util.io.FileUtil;
+import com.yan.novel.schema.NovelChapter;
+import com.yan.novel.schema.NovelInfo;
+import com.yan.novel.util.NovelHtmlUtil;
 
 /**
  * 
@@ -53,7 +57,10 @@ public class NovelCrawlService {
 
 		// 请求这个url，获取返回的html内容
 		String content = this.requestUrlByGetMethod(novelUrl);
+		FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\novel.html", content, "UTF-8");
 		
+		//TODO
+		NovelInfo novelInfo = new NovelInfo();
 		// 使用jsoup解析html内容
 		Document document=Jsoup.parse(content);
 		Element element = document.select("div#maininfo").first();
@@ -62,10 +69,12 @@ public class NovelCrawlService {
 			System.out.println(childElement.wholeText());
 		}
 		
+		List<NovelChapter> novelChapters = new ArrayList<NovelChapter>();
 		// 使用jsoup获取章节链接
 		Element chapterListDivElement = document.select("div#list").first();
 		List<Element> chapterLinkElementList = chapterListDivElement.select("a");
 		if(chapterLinkElementList != null) {
+			int serialNo = 1;
 			for(Element linkElement:chapterLinkElementList) {
 				String linkText = linkElement.html();
 				String[] ary = linkText.split("\\s+");
@@ -74,13 +83,43 @@ public class NovelCrawlService {
 				String chapterRelativeUrl = linkElement.attr("href");
 				String chapterUrl = webRootUrl + chapterRelativeUrl;
 				System.out.println(chapterRelativeUrl);
+				
+				// 从章节相对链接中截取章节的urlToken
+				int index = chapterRelativeUrl.lastIndexOf("/");
+				int index2 = chapterRelativeUrl.lastIndexOf(".html");
+				String chapterUrlToken = chapterRelativeUrl.substring(index+1, index2);
+				
+				NovelChapter chapter = new NovelChapter();
+				chapter.setSerialNo(serialNo);
+				chapter.setChapterFullName(linkText);
+				chapter.setChapterUrlToken(chapterUrlToken);
+				chapter.setChapterUrl(chapterUrl);
+				if(ary != null && ary.length >= 2){
+					chapter.setChapterSerialName(ary[0].trim());
+					chapter.setChapterName(ary[1].trim());
+				}else if(ary != null && ary.length >= 1){
+					chapter.setChapterName(ary[0].trim());
+				}
+				
+				novelChapters.add(chapter);
+				serialNo++;
 			}
 		}
 		
 		// 章节链接举例
 		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
 		// 相对路径    /2_2144/1268254.html
-		
+		if(novelChapters != null){
+			for(NovelChapter novelChapter : novelChapters){
+				String novelChapterUrl = novelChapter.getChapterUrl();
+				String chapterContent = this.crawNovelChapter(novelChapterUrl);
+				novelChapter.setChapterContent(chapterContent);
+				
+				//TODO 将内容写入到文件中
+				FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\chapter.html", chapterContent, "UTF-8");
+				break;
+			}
+		}
 		return null;
 	}
 	
@@ -96,7 +135,11 @@ public class NovelCrawlService {
 		Document document=Jsoup.parse(html);
 		Element element = document.select("div#content").first();
 		String chapterContent = element.html();
-		System.out.println(chapterContent);
+		//System.out.println(chapterContent);
+		
+		// 去掉章节内容中的html标签
+		chapterContent = NovelHtmlUtil.removeHtmlTags(chapterContent);
+		
 		return chapterContent;
 	}
 	
@@ -171,7 +214,7 @@ public class NovelCrawlService {
 //		        }
 				content = EntityUtils.toString(entity, "gbk");
 //                System.out.println("Response content: " + content);
-                FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\novel.html", content, "UTF-8");
+                
 		    }
 			
 		} catch (Exception e) {
@@ -196,10 +239,10 @@ public class NovelCrawlService {
 		String novelUrlToken = "2_2144";
 		try {
 			NovelCrawlService novelCrawlService = new NovelCrawlService();
-//			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
+			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
 			
 			// http://www.biquge.com.tw/2_2144/1268254.html
-			novelCrawlService.crawNovelChapter("http://www.biquge.com.tw/2_2144/1268254.html");
+//			novelCrawlService.crawNovelChapter("http://www.biquge.com.tw/2_2144/1268254.html");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
