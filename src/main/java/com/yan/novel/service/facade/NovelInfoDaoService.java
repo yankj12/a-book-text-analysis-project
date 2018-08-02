@@ -13,4 +13,7 @@ public final static String MAPPER_NAME_SPACE ="com.yan.novel.mapping.NovelInfoMa
 	boolean insertBathNovelInfo(List<NovelInfo> novelInfos);
 	
 	NovelInfo queryNovelInfoByNovelUrlToken(String novelUrlToken);
+	
+	List<NovelInfo> queryNovelInfosByNovelName(String novelName);
+	
 }

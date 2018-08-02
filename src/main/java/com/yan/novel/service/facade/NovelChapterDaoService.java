@@ -12,5 +12,7 @@ public final static String MAPPER_NAME_SPACE ="com.yan.novel.mapping.NovelChapte
 	
 	boolean insertBathNovelChapter(List<NovelChapter> novelChapters);
 	
-	NovelChapter queryNovelChapterByNovelUrlToken(String novelUrlToken);
+	NovelChapter queryNovelChapterByNovelUrlTokenAndChapterUrlToken(String novelUrlToken, String chapterUrlToken);
+	
+	List<NovelChapter> queryNovelChaptersByNovelUrlToken(String novelUrlToken);
 }

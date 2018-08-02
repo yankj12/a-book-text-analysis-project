@@ -22,4 +22,8 @@
     	select * from NovelChapter where novelUrlToken = #{novelUrlToken} and chapterUrlToken = #{chapterUrlToken}
     </select>
     
+    <select id="queryNovelChaptersByNovelUrlToken" parameterType="string" resultType="com.yan.novel.schema.NovelChapter">
+    	select * from NovelChapter where novelUrlToken = #{novelUrlToken}
+    </select>
+    
 </mapper>

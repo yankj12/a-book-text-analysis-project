@@ -22,4 +22,8 @@
     	select * from NovelInfo where novelUrlToken = #{novelUrlToken}
     </select>
     
+    <select id="queryNovelInfosByNovelName" parameterType="string" resultType="com.yan.novel.schema.NovelInfo">
+    	select * from NovelInfo where novelName = #{novelName}
+    </select>
+    
 </mapper>

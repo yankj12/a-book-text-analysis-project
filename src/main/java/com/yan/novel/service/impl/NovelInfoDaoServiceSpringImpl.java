@@ -56,5 +56,17 @@ public class NovelInfoDaoServiceSpringImpl implements NovelInfoDaoService{
 		result = true;
 		return result;
 	}
+
+
+	@Override
+	public List<NovelInfo> queryNovelInfosByNovelName(String novelName) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "queryNovelInfosByNovelName";
+		List<NovelInfo> novelInfos = sqlSession.selectList(statement, novelName);
+		
+		sqlSession.close();
+		return novelInfos;
+	}
 	
 }
