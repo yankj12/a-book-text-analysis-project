@@ -28,6 +28,7 @@ import com.yan.novel.service.facade.NovelInfoDaoService;
 import com.yan.novel.service.impl.NovelChapterDaoServiceSpringImpl;
 import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
 import com.yan.novel.util.NovelHtmlUtil;
+import com.yan.novel.util.NovelToFilesUtil;
 
 /**
  * 
@@ -43,6 +44,11 @@ public class NovelCrawlService {
 	private String proxyIp = null;
 	private int port = 0;
 	
+	// 是否写入到本地文件
+	private boolean writeToLocal;
+	// 小说内容持久化到本地文件夹中的位置
+	private String workRootDirName;
+	
 	public NovelCrawlService(){
 		try {
 			Properties properties = PropertiesIOUtil.loadProperties("/config.properties");
@@ -50,6 +56,13 @@ public class NovelCrawlService {
 			if(useProxy){
 				this.proxyIp = properties.getProperty("proxy.ip");
 				this.port = Integer.parseInt(properties.getProperty("proxy.port"));
+			}
+			
+			// 是否写入到本地文件
+			this.writeToLocal = Boolean.parseBoolean(properties.getProperty("writeToLocal"));
+			if(writeToLocal) {
+				// 小说内容持久化到本地文件
+				this.workRootDirName = properties.getProperty("rootDir");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,7 +74,6 @@ public class NovelCrawlService {
 
 		// 请求这个url，获取返回的html内容
 		String content = this.requestUrlByGetMethod(novelUrl);
-		FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\novel.html", content, "UTF-8");
 		
 		//TODO
 		NovelInfo novelInfo = new NovelInfo();
@@ -103,6 +115,18 @@ public class NovelCrawlService {
 		Element introElement = element.select("div#intro").first();
 		String novelSummary = introElement.text();
 		novelInfo.setNovelSummary(novelSummary);
+		
+		// 首先应该初始化文件夹
+		if(this.writeToLocal) {
+			System.out.println("初始化小说文件夹:" + novelInfo.getNovelName());
+			NovelToFilesUtil.initLocalDirsAndFiles(this.workRootDirName, novelName);
+		}
+		
+		// 小说信息写入到本地文件
+		if(this.writeToLocal) {
+			System.out.println("小说信息写入到文件:" + novelInfo.getNovelName());
+			NovelToFilesUtil.writeNovelInfoToLocalFile(novelInfo, this.workRootDirName);
+		}
 		
 		List<NovelChapter> novelChapters = new ArrayList<NovelChapter>();
 		// 使用jsoup获取章节链接
@@ -171,8 +195,12 @@ public class NovelCrawlService {
 				novelChapter.setChapterContent(chapterContent);
 				
 				novelChaptersForSave.add(novelChapter);
-				//TODO 将内容写入到文件中
-//				FileUtil.writeToFile("C:\\Users\\Yan\\Desktop\\chapter.html", chapterContent, "UTF-8");
+				// 将内容写入到文件中
+				// 章节内容写入到本地文件
+				if(this.writeToLocal) {
+					System.out.println("章节内容写入到文件:" + novelChapter.getChapterFullName());
+					NovelToFilesUtil.writeNovelChapterToLocalFile(novelInfo, novelChapter, this.workRootDirName);
+				}
 				
 				// 每100条保存一次
 				if(chapterCount % 100 == 0) {
@@ -311,7 +339,7 @@ public class NovelCrawlService {
 		// http://www.biquge.com.tw/2_2144/
 		
 		String webRootUrl = "http://www.biquge.com.tw";
-		String novelUrlToken = "2_2144";
+		String novelUrlToken = "17_17464";
 		try {
 			NovelCrawlService novelCrawlService = new NovelCrawlService();
 			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
