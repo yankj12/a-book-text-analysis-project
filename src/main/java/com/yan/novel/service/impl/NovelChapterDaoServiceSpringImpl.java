@@ -74,5 +74,28 @@ public class NovelChapterDaoServiceSpringImpl implements NovelChapterDaoService{
 		sqlSession.close();
 		return novelChapters;
 	}
+
+
+	@Override
+	public int countNovelChaptersBySerialNoRegion(Map<String, Object> map) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "countNovelChaptersBySerialNoRegion";
+		int count = sqlSession.selectOne(statement, map);
+		
+		sqlSession.close();
+		return count;
+	}
+
+
+	@Override
+	public void deleteNovelChaptersBySerialNoRegion(Map<String, Object> map) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "deleteNovelChaptersBySerialNoRegion";
+		sqlSession.delete(statement, map);
+		
+		sqlSession.close();
+	}
 	
 }

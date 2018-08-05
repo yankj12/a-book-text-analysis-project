@@ -26,4 +26,11 @@
     	select * from NovelChapter where novelUrlToken = #{novelUrlToken}
     </select>
     
+    <select id="countNovelChaptersBySerialNoRegion" parameterType="java.util.Map" resultType="int">
+    	select count(*) from NovelChapter where novelUrlToken=#{novelUrlToken} and serialNo &gt;= #{fromSerialNo} and serialNo &lt;= #{toSerialNo}
+    </select>
+    
+    <delete id="deleteNovelChaptersBySerialNoRegion" parameterType="java.util.Map">
+    	delete from NovelChapter where novelUrlToken=#{novelUrlToken} and serialNo &gt;= #{fromSerialNo} and serialNo &lt;= #{toSerialNo}
+    </delete>
 </mapper>

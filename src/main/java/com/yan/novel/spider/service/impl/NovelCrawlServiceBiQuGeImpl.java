@@ -1,15 +1,15 @@
-package com.yan.novel.spider.service;
+package com.yan.novel.spider.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -21,24 +21,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.yan.common.util.PropertiesIOUtil;
-import com.yan.common.util.io.FileUtil;
 import com.yan.novel.schema.NovelChapter;
 import com.yan.novel.schema.NovelInfo;
 import com.yan.novel.service.facade.NovelChapterDaoService;
 import com.yan.novel.service.facade.NovelInfoDaoService;
 import com.yan.novel.service.impl.NovelChapterDaoServiceSpringImpl;
 import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
+import com.yan.novel.spider.service.facade.NovelCrawlService;
 import com.yan.novel.util.NovelHtmlUtil;
 import com.yan.novel.util.NovelToFilesUtil;
 
-/**
- * 
- * 使用httpclient处理请求
- * 
- * 使用jsoup解析html
- * https://www.cnblogs.com/zerotomax/p/7246815.html
- */
-public class NovelCrawlService {
+public class NovelCrawlServiceBiQuGeImpl implements NovelCrawlService{
 
 	// 是否使用代理
 	private boolean useProxy = false;
@@ -50,7 +43,10 @@ public class NovelCrawlService {
 	// 小说内容持久化到本地文件夹中的位置
 	private String workRootDirName;
 	
-	public NovelCrawlService(){
+	/**
+	 * 初始化类的参数
+	 */
+	public void init() {
 		try {
 			Properties properties = PropertiesIOUtil.loadProperties("/config.properties");
 			this.useProxy = Boolean.parseBoolean(properties.getProperty("useProxy"));
@@ -68,6 +64,11 @@ public class NovelCrawlService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public NovelCrawlServiceBiQuGeImpl(){
+		// 初始化参数
+		this.init();
 	}
 	
 	public String crawlNovel(String webRootUrl, String novelUrlToken) throws Exception{
@@ -119,13 +120,13 @@ public class NovelCrawlService {
 		
 		// 首先应该初始化文件夹
 		if(this.writeToLocal) {
-			System.out.println("初始化小说文件夹:" + novelInfo.getNovelName());
+			//System.out.println("初始化小说文件夹:" + novelInfo.getNovelName());
 			NovelToFilesUtil.initLocalDirsAndFiles(this.workRootDirName, novelName);
 		}
 		
 		// 小说信息写入到本地文件
 		if(this.writeToLocal) {
-			System.out.println("小说信息写入到文件:" + novelInfo.getNovelName());
+			//System.out.println("小说信息写入到文件:" + novelInfo.getNovelName());
 			NovelToFilesUtil.writeNovelInfoToLocalFile(novelInfo, this.workRootDirName);
 		}
 		
@@ -202,12 +203,35 @@ public class NovelCrawlService {
 				// 将内容写入到文件中
 				// 章节内容写入到本地文件
 				if(this.writeToLocal) {
-					System.out.println("章节内容写入到文件:" + novelChapter.getChapterFullName());
+					//System.out.println("章节内容写入到文件:" + novelChapter.getChapterFullName());
 					NovelToFilesUtil.writeNovelChapterToLocalFile(novelInfo, novelChapter, this.workRootDirName);
 				}
 				
 				// 每100条保存一次
 				if(chapterCount % 100 == 0) {
+					
+					// 数据库保存时判断重复并去重
+					// 去重策略：
+					// 1、查下数据库，存在的章节跳过处理步骤
+					// 2、根据序号的启示和终止，进行删除操作，再插入
+					// 3、进行批量update操作（不过判断逻辑稍微复杂些）
+					int fromSerialNo = novelChaptersForSave.get(0).getSerialNo();
+					int toSerialNo = novelChaptersForSave.get(novelChaptersForSave.size()-1).getSerialNo();
+					
+					Map<String, Object> map = new HashMap<>();
+					map.put("novelUrlToken", novelUrlToken);
+					map.put("fromSerialNo", fromSerialNo);
+					map.put("toSerialNo", toSerialNo);
+					
+					// 先查一下在序号区间内的章节数目
+					int countOfChaptersInSerialNoRegion = novelChapterDaoService.countNovelChaptersBySerialNoRegion(map);
+					if(countOfChaptersInSerialNoRegion > 0) {
+						// 如果在序号区间内的章节数目大于0的话，删除序号区间内的章节，便于后续插入
+						
+						System.out.println("序号区间[" + fromSerialNo + "-" + toSerialNo + "]已存在章节数[" + countOfChaptersInSerialNoRegion + "]，先删后插");
+						novelChapterDaoService.deleteNovelChaptersBySerialNoRegion(map);
+					}
+					
 					System.out.println("每100条保存一次");
 					novelChapterDaoService.insertBathNovelChapter(novelChaptersForSave);
 					// 清空list
@@ -254,21 +278,6 @@ public class NovelCrawlService {
 	 * @return
 	 */
 	public String requestUrlByGetMethod(String url) {
-//		request header
-//		
-//		Host: www.biquge.com.tw
-//		User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0
-//		Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-//		Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
-//		Accept-Encoding: gzip, deflate
-//		Referer: https://www.baidu.com/link?url=RJ7MpkvYpENEfeXkw7-VTDKT39DFECqQvmQYvHsJLNr9dSfdCxuOQR7_646eQs9a&wd=&eqid=ea3343c700047d65000000025b5ac858
-//		Cookie: __cdnuid=c5d84123c59bad6d9f3437f188427588
-//		Connection: keep-alive
-//		Upgrade-Insecure-Requests: 1
-//		If-Modified-Since: Wed, 25 Jul 2018 07:17:07 GMT
-//		If-None-Match: "80dba87ee723d41:0"
-//		Cache-Control: max-age=0
-		
 		CloseableHttpClient httpclient = null;
 		
         //实例化CloseableHttpClient对象
@@ -337,24 +346,5 @@ public class NovelCrawlService {
 		}
 		return content;
 	}
-	
-	
-	public static void main(String[] args) {
-		// http://www.biquge.com.tw/2_2144/
-		
-		String webRootUrl = "http://www.biquge.com.tw";
-		String novelUrlToken = "17_17464";
-		try {
-			NovelCrawlService novelCrawlService = new NovelCrawlService();
-			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
-			
-			// http://www.biquge.com.tw/2_2144/1268254.html
-//			novelCrawlService.crawNovelChapter("http://www.biquge.com.tw/2_2144/1268254.html");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	
 }
