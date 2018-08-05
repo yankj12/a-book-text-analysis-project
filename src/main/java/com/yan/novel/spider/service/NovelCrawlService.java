@@ -3,6 +3,7 @@ package com.yan.novel.spider.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -193,6 +194,9 @@ public class NovelCrawlService {
 				String novelChapterUrl = novelChapter.getChapterUrl();
 				String chapterContent = this.crawNovelChapter(novelChapterUrl);
 				novelChapter.setChapterContent(chapterContent);
+				
+				novelChapter.setInsertTime(new Date());
+				novelChapter.setUpdateTime(new Date());
 				
 				novelChaptersForSave.add(novelChapter);
 				// 将内容写入到文件中
