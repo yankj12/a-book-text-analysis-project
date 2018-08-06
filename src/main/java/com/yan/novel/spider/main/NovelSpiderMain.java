@@ -10,7 +10,11 @@ public class NovelSpiderMain {
 	public static void main(String[] args) {
 		//crawlNovelFromBiQuGe("1_1145");
 		
-		crawlNovelFromBXWX("b/13/13370");
+		//crawlNovelFromBXWX("b/13/13370");
+		
+		// xiaoshuo/10/10316
+		// xiaoshuo/4/4631
+		crawlNovelFromYBDU("xiaoshuo/4/4631");
 	}
 
 	/**
