@@ -132,13 +132,13 @@ public class NovelToFilesUtil {
 		// 内容格式
 		// novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary
 		StringBuilder novelInfoBuilder = new StringBuilder();
-		novelInfoBuilder.append("[").append(novelInfo.getNovelUrlToken()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getNovelUrl()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getNovelName()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getAuthorName()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getLastUpdateTime()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getLastUpdateChapterFullName()).append("]");
-		novelInfoBuilder.append("[").append(novelInfo.getNovelSummary()).append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getNovelUrlToken()!=null?novelInfo.getNovelUrlToken():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getNovelUrl()!=null?novelInfo.getNovelUrl():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getNovelName()!=null?novelInfo.getNovelName():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getAuthorName()!=null?novelInfo.getAuthorName():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getLastUpdateTime()!=null?novelInfo.getLastUpdateTime():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getLastUpdateChapterFullName()!=null?novelInfo.getLastUpdateChapterFullName():"").append("]");
+		novelInfoBuilder.append("[").append(novelInfo.getNovelSummary()!=null?novelInfo.getNovelSummary():"").append("]");
 		// 写入内容
 		FileUtil.writeToFile(novelInfoTextFileName, novelInfoBuilder.toString(), "UTF-8");
 		

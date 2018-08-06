@@ -3,6 +3,7 @@ package com.yan.novel.spider.main;
 import com.yan.novel.spider.service.facade.NovelCrawlService;
 import com.yan.novel.spider.service.impl.NovelCrawlServiceBXWXImpl;
 import com.yan.novel.spider.service.impl.NovelCrawlServiceBiQuGeImpl;
+import com.yan.novel.spider.service.impl.NovelCrawlServiceYBDUImpl;
 
 public class NovelSpiderMain {
 
@@ -48,4 +49,18 @@ public class NovelSpiderMain {
 		}
 	}
 
+	public static void crawlNovelFromYBDU(String novelUrlToken) {
+		
+		String webRootUrl = "https://www.ybdu.com";
+		
+		try {
+			NovelCrawlService novelCrawlService = new NovelCrawlServiceYBDUImpl();
+			novelCrawlService.crawlNovel(webRootUrl, novelUrlToken);
+			
+			// http://www.biquge.com.tw/2_2144/1268254.html
+//			novelCrawlService.crawNovelChapter("http://www.biquge.com.tw/2_2144/1268254.html");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
