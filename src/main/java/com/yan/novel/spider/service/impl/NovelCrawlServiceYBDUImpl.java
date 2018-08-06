@@ -185,10 +185,27 @@ public class NovelCrawlServiceYBDUImpl implements NovelCrawlService{
 		// 绝对路径    http://www.biquge.com.tw/2_2144/1268254.html
 		// 相对路径    /2_2144/1268254.html
 		
-		int chapterCount = 1;
 		List<NovelChapter> novelChaptersForSave = new ArrayList<>();
 		if(novelChapters != null){
-			for(NovelChapter novelChapter : novelChapters){
+			for(int i=0;i<novelChapters.size();i++){
+				NovelChapter novelChapter = novelChapters.get(i);
+				
+				int chapterCount = i + 1;
+				
+				int serialNo = novelChapter.getSerialNo();
+				
+				Map<String, Object> condition = new HashMap<>();
+				condition.put("novelUrlToken", novelUrlToken);
+				condition.put("fromSerialNo", serialNo);
+				condition.put("toSerialNo", serialNo+99);
+				
+				int count = novelChapterDaoService.countNovelChaptersBySerialNoRegion(condition);
+				if(count == 100) {
+					i += 99;
+					System.out.println("序号区间[" + serialNo + "-" + (serialNo+99) + "]章节已保存，跳过");
+					continue;
+				}
+				
 				System.out.println("请求章节内容:" + novelChapter.getChapterFullName());
 				
 				String novelChapterUrl = novelChapter.getChapterUrl();
