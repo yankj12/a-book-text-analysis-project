@@ -14,7 +14,9 @@ public class NovelSpiderMain {
 		
 		// xiaoshuo/10/10316
 		// xiaoshuo/4/4631
-		crawlNovelFromYBDU("xiaoshuo/4/4631");
+		// xiaoshuo/10/10644
+		// xiaoshuo/6/6433
+		crawlNovelFromYBDU("xiaoshuo/6/6433");
 	}
 
 	/**

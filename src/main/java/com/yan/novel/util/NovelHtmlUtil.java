@@ -1,6 +1,5 @@
 package com.yan.novel.util;
 
-import com.yan.common.util.io.FileUtil;
 
 public class NovelHtmlUtil {
 

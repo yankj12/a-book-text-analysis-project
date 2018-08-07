@@ -1,11 +1,11 @@
 package com.yan.novel.spider.service.facade;
 
-public interface NovelCrawlService {
+import java.util.List;
 
-	/**
-	 * 初始化类的参数
-	 */
-	public void init();
+import com.yan.novel.schema.NovelChapter;
+import com.yan.novel.schema.NovelInfo;
+
+public interface NovelCrawlService {
 	
 	/**
 	 * 爬取小说内容
@@ -18,18 +18,16 @@ public interface NovelCrawlService {
 	public String crawlNovel(String webRootUrl, String novelUrlToken) throws Exception;
 	
 	/**
-	 * 爬取章节内容
-	 * @param chapterUrl
-	 * @return
+	 * 爬取并保存章节内容
+	 * 保存到数据库
+	 * 是否保存到文件取决于配置文件中的开关
+	 * （这个方法中的代码跟具体的小说网站没有关系）
+	 * 
+	 * @param novelUrlToken
+	 * @param novelInfo
+	 * @param novelChapters
+	 * @throws Exception 
 	 */
-	public String crawNovelChapter(String chapterUrl);
-	
-	/**
-	 * 通过get的方式请求一个url
-	 * @param url
-	 * @return
-	 */
-	public String requestUrlByGetMethod(String url);
-	
+	public void crawlAndSaveNovelChapters(String novelUrlToken, NovelInfo novelInfo, List<NovelChapter> novelChapters) throws Exception;
 	
 }
