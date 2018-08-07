@@ -1,5 +1,7 @@
 package com.yan.novel.util;
 
+import com.yan.common.util.io.FileUtil;
+
 public class NovelHtmlUtil {
 
 	/**
@@ -44,33 +46,46 @@ public class NovelHtmlUtil {
 		int htmlTagStartIndex = content.indexOf("<");
 		int htmlTagEndIndex = content.indexOf(">");
 		
-		// 处理后的最终结果
-		StringBuilder resultBuilder = new StringBuilder();
 		String preString = content.substring(0, htmlTagStartIndex);
-		resultBuilder.append(preString);
 		
 		String suffixString = content.substring(htmlTagStartIndex);
-		System.out.println(suffixString);
+//		System.out.println(suffixString);
 		
-		htmlTagStartIndex = suffixString.indexOf("<");
-		htmlTagEndIndex = suffixString.indexOf(">");
+//		boolean htmlCodeBlockAlreadyRemoved = false;
 		
-		// 有些html标签中不仅包含标签名，还包含样式等信息
-		// 有些标签是<xxx />这种的
-		String htmlTagFull = suffixString.substring(htmlTagStartIndex+1, htmlTagEndIndex);
+		while(true) {
+			htmlTagStartIndex = suffixString.indexOf("<");
+			htmlTagEndIndex = suffixString.indexOf(">");
+			
+			// 没有<或者>字符的时候，肯定就没有html标签了，应该退出了
+			if(htmlTagStartIndex < 0 || htmlTagEndIndex < 0) {
+				break;
+			}
+			
+			// 有些html标签中不仅包含标签名，还包含样式等信息
+			// 有些标签是<xxx />这种的
+			String htmlTagFull = suffixString.substring(htmlTagStartIndex+1, htmlTagEndIndex);
+			
+			String[] tagStrs = htmlTagFull.split("\\s+");
+			String htmlTag = tagStrs[0];
+			
+			int startTagIndex = suffixString.indexOf("<" + htmlTag);
+			int endTagIndex = suffixString.indexOf("</" + htmlTag);
+			
+			int endTagEndIndex = suffixString.indexOf(">", endTagIndex);
+			
+			String htmlText = suffixString.substring(startTagIndex, endTagEndIndex + 1);
+			//System.out.println(htmlText);
+			
+			// 找不到html代码块，应该退出循环了
+			if(htmlText == null || "".equals(htmlText)) {
+				break;
+			}
+			suffixString = suffixString.substring(endTagEndIndex + 1);
+		}
 		
-		String[] tagStrs = htmlTagFull.split("\\s+");
-		String htmlTag = tagStrs[0];
 		
-		int startTagIndex = suffixString.indexOf("<" + htmlTag);
-		int endTagIndex = suffixString.indexOf("</" + htmlTag);
-		
-		int endTagEndIndex = suffixString.substring(endTagIndex).indexOf(">");
-		
-		String htmlText = suffixString.substring(startTagIndex, endTagIndex + endTagEndIndex + 1);
-		System.out.println(htmlText);
-		
-		return content;
+		return preString + suffixString;
 	}
-	
+
 }
