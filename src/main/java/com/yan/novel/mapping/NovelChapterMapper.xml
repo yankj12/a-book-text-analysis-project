@@ -33,4 +33,15 @@
     <delete id="deleteNovelChaptersBySerialNoRegion" parameterType="java.util.Map">
     	delete from NovelChapter where novelUrlToken=#{novelUrlToken} and serialNo &gt;= #{fromSerialNo} and serialNo &lt;= #{toSerialNo}
     </delete>
+    
+    <update id="updateChapterContentByNovelUrlTokenAndChapterUrlToken" parameterType="com.yan.novel.schema.NovelChapter">
+    	update NovelChapter set chapterContent=#{chapterContent}, updateTime=#{updateTime} where novelUrlToken = #{novelUrlToken} and chapterUrlToken = #{chapterUrlToken}
+    </update>
+    
+    <update id="updateChapterContentBath" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" separator=";" open="" close="">
+	        update NovelChapter set chapterContent=#{item.chapterContent}, updateTime=#{item.updateTime} where novelUrlToken = #{item.novelUrlToken} and chapterUrlToken = #{item.chapterUrlToken}
+	    </foreach>
+    </update>
+    
 </mapper>

@@ -97,5 +97,29 @@ public class NovelChapterDaoServiceSpringImpl implements NovelChapterDaoService{
 		
 		sqlSession.close();
 	}
+
+
+	@Override
+	public void updateChapterContentByNovelUrlTokenAndChapterUrlToken(NovelChapter novelChapter) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "updateChapterContentByNovelUrlTokenAndChapterUrlToken";
+		sqlSession.update(statement, novelChapter);
+		
+		sqlSession.close();
+		
+	}
+
+
+	@Override
+	public void updateChapterContentBath(List<NovelChapter> novelChapters) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "updateChapterContentBath";
+		sqlSession.update(statement, novelChapters);
+		
+		sqlSession.close();
+		
+	}
 	
 }

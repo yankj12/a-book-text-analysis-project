@@ -29,4 +29,16 @@ public final static String MAPPER_NAME_SPACE ="com.yan.novel.mapping.NovelChapte
 	 * @param map
 	 */
 	void deleteNovelChaptersBySerialNoRegion(Map<String, Object> map);
+	
+	/**
+	 * 更新章节内容字段
+	 * @param novelChapter
+	 */
+	void updateChapterContentByNovelUrlTokenAndChapterUrlToken(NovelChapter novelChapter);
+	
+	/**
+	 * 批量更新章节内容
+	 * @param novelChapters
+	 */
+	void updateChapterContentBath(List<NovelChapter> novelChapters);
 }

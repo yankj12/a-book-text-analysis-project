@@ -1,7 +1,7 @@
 package com.yan.novel.util;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import com.yan.common.util.io.FileUtil;
@@ -30,10 +30,14 @@ import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
 public class NovelToFilesUtil {
 
 	public static void main(String[] args) throws Exception {
+		
 		String workRootDirName = "E:\\文档\\小说";
-		String novelName = "临高启明";
-		// 根据小说名称，从数据库读取出内容写入到本地文件系统
-		readNovelFromDbAndWriteToLocalFile(workRootDirName, novelName);
+		
+		String[] novelNames = new String[]{"临高启明", "奋斗在新明朝", "铁器时代全文阅读", "橙红年代全文阅读", "明血全文阅读", "铁血大明全文阅读", "晚明全文阅读", "晚明之我主沉浮全文阅读", "奋斗在晚明全文阅读"};
+		for(String novelName:novelNames){
+			// 根据小说名称，从数据库读取出内容写入到本地文件系统
+			readNovelFromDbAndWriteToLocalFile(workRootDirName, novelName);
+		}
 		
 	}
 
@@ -55,11 +59,27 @@ public class NovelToFilesUtil {
 		NovelChapterDaoService novelChapterDaoService = new NovelChapterDaoServiceSpringImpl();
 		List<NovelInfo> novelInfos = novelInfoDaoService.queryNovelInfosByNovelName(novelName);
 		
-		NovelInfo novelInfo = null;
 		if(novelInfos != null && novelInfos.size() > 0) {
-			novelInfo = novelInfos.get(0);
-			// 将小说信息写入到文件中
-			writeNovelInfoToLocalFile(novelInfo, workRootDirName);
+			for(NovelInfo novelInfo:novelInfos){
+				// 将小说信息写入到文件中
+				writeNovelInfoToLocalFile(novelInfo, workRootDirName);
+				
+				String novelUrlToken = novelInfo.getNovelUrlToken();
+				
+				List<NovelChapter> novelChapters = novelChapterDaoService.queryNovelChaptersByNovelUrlToken(novelUrlToken);
+				if(novelChapters != null && novelChapters.size() > 0) {
+					for(NovelChapter novelChapter:novelChapters) {
+						// 去除章节内容中的html标签
+						novelChapter.setChapterContent(NovelHtmlUtil.removeHtmlTags(novelChapter.getChapterContent()));
+						novelChapter.setUpdateTime(new Date());
+						// 将章节内容写入到文件中
+						writeNovelChapterToLocalFile(novelInfo, novelChapter, workRootDirName);
+					}
+					// 批量更新数据库中的章节内容
+					System.out.println("批量更新数据库中[" + novelInfo.getNovelName() + "]的章节内容");
+					novelChapterDaoService.updateChapterContentBath(novelChapters);
+				}
+			}
 		}else {
 			// 根据小说名称找不到小说
 			System.out.println("根据小说名称找不到小说");
@@ -67,19 +87,6 @@ public class NovelToFilesUtil {
 			return ;
 		}
 		
-		String novelUrlToken = null;
-		if(novelInfo != null) {
-			novelUrlToken = novelInfo.getNovelUrlToken();
-		}
-		
-		List<NovelChapter> novelChapters = novelChapterDaoService.queryNovelChaptersByNovelUrlToken(novelUrlToken);
-		if(novelChapters != null && novelChapters.size() > 0) {
-			for(NovelChapter novelChapter:novelChapters) {
-				// 将章节内容写入到文件中
-				writeNovelChapterToLocalFile(novelInfo, novelChapter, workRootDirName);
-			}
-
-		}
 	}
 	
 	/**
