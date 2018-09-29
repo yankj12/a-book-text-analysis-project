@@ -11,6 +11,12 @@ public class NovelChapter implements Serializable{
 	
 	private String novelUrlToken;
 	
+	// 卷序号
+	private Integer volumeSerialNo;
+	
+	// 卷名称
+	private String volumeName;
+	
 	// 序号
 	private int serialNo;
 	
@@ -122,6 +128,22 @@ public class NovelChapter implements Serializable{
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public Integer getVolumeSerialNo() {
+		return volumeSerialNo;
+	}
+
+	public void setVolumeSerialNo(Integer volumeSerialNo) {
+		this.volumeSerialNo = volumeSerialNo;
+	}
+
+	public String getVolumeName() {
+		return volumeName;
+	}
+
+	public void setVolumeName(String volumeName) {
+		this.volumeName = volumeName;
 	}
 	
 }

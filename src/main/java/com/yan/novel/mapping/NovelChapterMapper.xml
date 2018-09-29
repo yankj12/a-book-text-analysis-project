@@ -4,17 +4,17 @@
 	
     <insert id="insertNovelChapter" parameterType="com.yan.novel.schema.NovelChapter">
     	insert into NovelChapter 
-    	(novelUrlToken,  serialNo,  chapterUrlToken,  chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
+    	(novelUrlToken,  serialNo,  chapterUrlToken,  volumeSerialNo, volumeName, chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
     	values 
-    	(#{novelUrlToken}, #{serialNo}, #{chapterUrlToken}, #{chapterSerialName}, #{chapterName}, #{chapterFullName}, #{chapterUrl}, #{chapterContent}, #{insertTime}, #{updateTime})
+    	(#{novelUrlToken}, #{serialNo}, #{chapterUrlToken}, #{volumeSerialNo}, #{volumeName}, #{chapterSerialName}, #{chapterName}, #{chapterFullName}, #{chapterUrl}, #{chapterContent}, #{insertTime}, #{updateTime})
     </insert>
     
     <insert id="insertBathNovelChapter" parameterType="java.util.List">
     	insert into NovelChapter 
-    	(novelUrlToken,  serialNo,  chapterUrlToken,  chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
+    	(novelUrlToken,  serialNo,  chapterUrlToken, volumeSerialNo, volumeName, chapterSerialName,  chapterName,  chapterFullName,  chapterUrl,  chapterContent,  insertTime,  updateTime) 
     	values 
     	<foreach collection="list" item="item" index="index" separator=",">
-            (#{item.novelUrlToken}, #{item.serialNo}, #{item.chapterUrlToken}, #{item.chapterSerialName}, #{item.chapterName}, #{item.chapterFullName}, #{item.chapterUrl}, #{item.chapterContent}, #{item.insertTime}, #{item.updateTime})
+            (#{item.novelUrlToken}, #{item.serialNo}, #{item.chapterUrlToken}, #{item.volumeSerialNo}, #{item.volumeName}, #{item.chapterSerialName}, #{item.chapterName}, #{item.chapterFullName}, #{item.chapterUrl}, #{item.chapterContent}, #{item.insertTime}, #{item.updateTime})
         </foreach>
     </insert>
     
