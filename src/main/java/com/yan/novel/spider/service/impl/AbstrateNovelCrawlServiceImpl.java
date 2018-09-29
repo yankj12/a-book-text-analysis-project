@@ -109,7 +109,15 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 				System.out.println("请求章节内容:" + novelChapter.getChapterFullName());
 				
 				String novelChapterUrl = novelChapter.getChapterUrl();
-				String chapterContent = this.crawNovelChapter(novelChapterUrl);
+				String chapterContent = "";
+				if(novelChapterUrl != null && !"".equals(novelChapterUrl.trim())){
+					try {
+						// try-catch ，避免请求html及解析过程中报错导致后续流程不走
+						chapterContent = this.crawNovelChapter(novelChapterUrl);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				novelChapter.setChapterContent(chapterContent);
 				
 				novelChapter.setInsertTime(new Date());
