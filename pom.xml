@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.yan</groupId>
-  <artifactId>novel-spider</artifactId>
+  <artifactId>a-book-text-analysis-project</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 

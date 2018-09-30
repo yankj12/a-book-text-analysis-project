@@ -1,4 +1,4 @@
-# novel-spider
+# a-book-text-analysis-project
 只是一个用于爬取小说的工具，计划使用http-client、建立索引、使用中文分词
 
 ## 计划要做的
