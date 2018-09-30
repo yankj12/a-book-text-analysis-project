@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.yan</groupId>
+    <artifactId>novel-spider</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>com.yan</groupId>
+  <artifactId>guwen-spider</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>guwen-spider</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <dependencies>
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	    <version>4.5.6</version>
+	</dependency>
+	<!-- jsoup java html parser -->
+	<dependency>
+	    <groupId>org.jsoup</groupId>
+	    <artifactId>jsoup</artifactId>
+	    <version>1.11.3</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.mybatis</groupId>
+	    <artifactId>mybatis</artifactId>
+	    <version>3.4.6</version>
+	</dependency>
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.11</version>
+	</dependency>
+	
+	<!-- lucene -->
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-core</artifactId>
+	    <version>${lucene.version}</version>
+	</dependency>
+
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-queryparser</artifactId>
+	    <version>${lucene.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-analyzers-common</artifactId>
+	    <version>${lucene.version}</version>
+	</dependency>
+	<!-- 高亮显示 -->
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-highlighter</artifactId>
+	    <version>${lucene.version}</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-analyzers-smartcn</artifactId>
+	    <version>${lucene.version}</version>
+	</dependency>
+	
+	<!-- ikanalyzer 分词器 -->
+	<dependency>
+	    <groupId>com.janeluo</groupId>
+	    <artifactId>ikanalyzer</artifactId>
+	    <version>2012_u6</version>
+	</dependency>
+
+  </dependencies>
+</project>
