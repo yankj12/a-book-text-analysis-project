@@ -1,6 +1,7 @@
 package com.yan.novel.spider.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,19 +73,19 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 		
 		List<Element> volumeDivElements = sonsElement.select("div.bookcont");
 		if(volumeDivElements != null){
-			// 卷序号
-			int volumeSerialNo = 1;
-			// 章节序号
-			int serialNo = 1;
-			for(Element volumeElement:volumeDivElements){
-				List<Element> elements = volumeElement.children();
-				Element volumeNameElement = elements.get(0);
-				Element volumeContentElement = elements.get(1);
+			
+			if(volumeDivElements.size() == 1) {
+				// 无所谓卷号，只有一卷
+				int volumeSerialNo = 1;
+				// 章节序号
+				int serialNo = 1;
+				
+				Element volumeElement = volumeDivElements.get(0);
 				
 				// 卷名
-				String volumeName = volumeNameElement.text();
+				String volumeName = "";
 				
-				List<Element> chapterLinkElementList = volumeContentElement.select("a");
+				List<Element> chapterLinkElementList = volumeElement.select("a");
 				if(chapterLinkElementList != null) {
 					for(Element linkElement:chapterLinkElementList) {
 						String linkText = linkElement.html();
@@ -135,12 +136,78 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 					}
 				}
 				
-				volumeSerialNo++;
+			}else if(volumeDivElements.size() > 1) {
+				// 有卷号
+				// 卷序号
+				int volumeSerialNo = 1;
+				// 章节序号
+				int serialNo = 1;
+				for(Element volumeElement:volumeDivElements){
+					List<Element> elements = volumeElement.children();
+					Element volumeNameElement = elements.get(0);
+					Element volumeContentElement = elements.get(1);
+					
+					// 卷名
+					String volumeName = volumeNameElement.text();
+					
+					List<Element> chapterLinkElementList = volumeContentElement.select("a");
+					if(chapterLinkElementList != null) {
+						for(Element linkElement:chapterLinkElementList) {
+							String linkText = linkElement.html();
+							String[] ary1 = linkText.split("\\s+");
+//						System.out.println(Arrays.toString(ary));
+							//  /2_2144/1268254.html
+							String chapterRelativeUrl = linkElement.attr("href");
+							
+							// 处理相对链接
+							String chapterUrl = "";
+							if(chapterRelativeUrl != null 
+									&& !"".equals(chapterRelativeUrl.trim()) 
+									&& !"#".equals(chapterRelativeUrl.trim())){
+								if(chapterRelativeUrl.startsWith("/")) {
+									
+								}else {
+									chapterRelativeUrl = "/" + chapterRelativeUrl;
+								}
+								
+								chapterUrl = webRootUrl + chapterRelativeUrl;
+							}
+//						System.out.println(chapterRelativeUrl);
+							
+							// 从章节相对链接中截取章节的urlToken
+							String chapterUrlToken = chapterRelativeUrl;
+							
+							NovelChapter chapter = new NovelChapter();
+							chapter.setNovelUrlToken(bookUrlToken);
+							
+							chapter.setVolumeSerialNo(volumeSerialNo);
+							chapter.setVolumeName(volumeName);
+							
+							chapter.setSerialNo(serialNo);
+							chapter.setChapterFullName(linkText);
+							chapter.setChapterUrlToken(chapterUrlToken);
+							chapter.setChapterUrl(chapterUrl);
+							if(ary1 != null && ary1.length >= 2){
+								chapter.setChapterSerialName(ary1[0].trim());
+								chapter.setChapterName(ary1[1].trim());
+							}else if(ary1 != null && ary1.length >= 1){
+								chapter.setChapterName(ary1[0].trim());
+							}
+							
+							novelChapters.add(chapter);
+							serialNo++;
+							
+							System.out.println("获取章节链接:" + chapter.getChapterFullName());
+						}
+					}
+					
+					volumeSerialNo++;
+				}
 			}
 		}
 
 		NovelInfoDaoService novelInfoDaoService = new NovelInfoDaoServiceSpringImpl();
-				NovelInfo novelInfoTmp = novelInfoDaoService.queryNovelInfoByNovelUrlToken(bookUrlToken);
+		NovelInfo novelInfoTmp = novelInfoDaoService.queryNovelInfoByNovelUrlToken(bookUrlToken);
 		if(novelInfoTmp != null) {
 			
 		}else {
