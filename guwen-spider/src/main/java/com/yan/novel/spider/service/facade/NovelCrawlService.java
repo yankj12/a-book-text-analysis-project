@@ -14,9 +14,9 @@ public interface NovelCrawlService {
 	public List<NovelInfo> findUnDownloadedNovels();
 	
 	/**
-	 * 将下载标志位置为1（已下载）
+	 * 回写下载标志位置
 	 */
-	public void updateNovelInfoDownloadFlag(String novelUrlToken);
+	public void updateNovelInfoDownloadFlag(String novelUrlToken, String downloadFlag);
 	
 	/**
 	 * 爬取小说内容

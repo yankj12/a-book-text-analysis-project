@@ -260,11 +260,11 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 		return novelInfos;
 	}
 
-	public void updateNovelInfoDownloadFlag(String novelUrlToken) {
+	public void updateNovelInfoDownloadFlag(String novelUrlToken, String downloadFlag) {
 		NovelInfoDaoService novelInfoDaoService = new NovelInfoDaoServiceSpringImpl();
 		NovelInfo novelInfo = new NovelInfo();
 		novelInfo.setNovelUrlToken(novelUrlToken);
-		novelInfo.setDownloadFlag("1");
+		novelInfo.setDownloadFlag(downloadFlag);
 		novelInfo.setUpdateTime(new Date());
 		
 		novelInfoDaoService.updateDownloadFlagByNovelUrlToken(novelInfo);

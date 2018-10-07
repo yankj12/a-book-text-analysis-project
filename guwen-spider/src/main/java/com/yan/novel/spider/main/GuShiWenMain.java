@@ -69,6 +69,8 @@ public class GuShiWenMain {
 		
 		// 爬取次数
 		int crawlCount = 1;
+		// 下载标志位
+		String downloadFlag = "0";
 		
 		// 只有爬取正常结束才从循环跳出 或者爬取次数在4次内（避免死循环）
 		// 使用这种机制来处理爬取过程中因异常而中断的情况
@@ -78,17 +80,21 @@ public class GuShiWenMain {
 				
 				// 如果上面的执行是以异常中断的话，应该通过循环继续处理，直到上面的方法正常结束，此时应该跳出循环
 				crawlEndWithSuccess = true;
+				// 成功
+				downloadFlag = "1";
 				
 			} catch (Exception e) {
 				crawlEndWithSuccess = false;
 				crawlCount++;
+				// 下载出现异常
+				downloadFlag = "2";
 				e.printStackTrace();
 			}
 			
 		}
 		
 		// 将书籍的downloadFlag置为1
-		novelCrawlService.updateNovelInfoDownloadFlag(bookUrlToken);
+		novelCrawlService.updateNovelInfoDownloadFlag(bookUrlToken, downloadFlag);
 		
 	}
 		
