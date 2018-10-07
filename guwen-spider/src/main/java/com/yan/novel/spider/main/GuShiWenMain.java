@@ -67,9 +67,12 @@ public class GuShiWenMain {
 		// 爬取数据是否正常结束
 		boolean crawlEndWithSuccess = false;
 		
-		// 只有爬取正常结束才从循环跳出
+		// 爬取次数
+		int crawlCount = 1;
+		
+		// 只有爬取正常结束才从循环跳出 或者爬取次数在4次内（避免死循环）
 		// 使用这种机制来处理爬取过程中因异常而中断的情况
-		while(!crawlEndWithSuccess){
+		while(!crawlEndWithSuccess && crawlCount <= 4){
 			try {
 				novelCrawlService.crawlNovel(webRootUrl, bookUrlToken);
 				
@@ -78,6 +81,7 @@ public class GuShiWenMain {
 				
 			} catch (Exception e) {
 				crawlEndWithSuccess = false;
+				crawlCount++;
 				e.printStackTrace();
 			}
 			
