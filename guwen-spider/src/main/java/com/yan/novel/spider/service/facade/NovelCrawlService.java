@@ -8,6 +8,17 @@ import com.yan.novel.schema.NovelInfo;
 public interface NovelCrawlService {
 	
 	/**
+	 * 查询出所有未下载的书籍（小说）
+	 * @return
+	 */
+	public List<NovelInfo> findUnDownloadedNovels();
+	
+	/**
+	 * 将下载标志位置为1（已下载）
+	 */
+	public void updateNovelInfoDownloadFlag(String novelUrlToken);
+	
+	/**
 	 * 爬取小说内容
 	 * 
 	 * @param webRootUrl

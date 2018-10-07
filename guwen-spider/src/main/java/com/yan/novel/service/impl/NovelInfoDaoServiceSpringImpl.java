@@ -2,6 +2,7 @@ package com.yan.novel.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -67,6 +68,30 @@ public class NovelInfoDaoServiceSpringImpl implements NovelInfoDaoService{
 		
 		sqlSession.close();
 		return novelInfos;
+	}
+
+
+	@Override
+	public List<NovelInfo> queryNovelInfosByCondition(Map<String, Object> condition) {
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "queryNovelInfosByCondition";
+		List<NovelInfo> novelInfos = sqlSession.selectList(statement, condition);
+		
+		sqlSession.close();
+		return novelInfos;
+	}
+
+
+	@Override
+	public void updateDownloadFlagByNovelUrlToken(NovelInfo novelInfo) {
+		novelInfo.setUpdateTime(new Date());
+		SqlSession sqlSession = JdbcUtil.getSqlSession(true);
+		
+		String statement = MAPPER_NAME_SPACE + "." + "updateDownloadFlagByNovelUrlToken";
+		sqlSession.update(statement, novelInfo);
+		
+		sqlSession.close();
 	}
 	
 }

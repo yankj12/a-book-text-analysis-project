@@ -22,7 +22,9 @@ import com.yan.common.util.PropertiesIOUtil;
 import com.yan.novel.schema.NovelChapter;
 import com.yan.novel.schema.NovelInfo;
 import com.yan.novel.service.facade.NovelChapterDaoService;
+import com.yan.novel.service.facade.NovelInfoDaoService;
 import com.yan.novel.service.impl.NovelChapterDaoServiceSpringImpl;
+import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
 import com.yan.novel.util.NovelToFilesUtil;
 
 public abstract class AbstrateNovelCrawlServiceImpl{
@@ -247,6 +249,26 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 			}
 		}
 		return content;
+	}
+
+	public List<NovelInfo> findUnDownloadedNovels() {
+		NovelInfoDaoService novelInfoDaoService = new NovelInfoDaoServiceSpringImpl();
+		Map<String, Object> condition = new HashMap<>();
+		condition.put("downloadFlag", "0");
+		List<NovelInfo> novelInfos = novelInfoDaoService.queryNovelInfosByCondition(condition);
+		
+		return novelInfos;
+	}
+
+	public void updateNovelInfoDownloadFlag(String novelUrlToken) {
+		NovelInfoDaoService novelInfoDaoService = new NovelInfoDaoServiceSpringImpl();
+		NovelInfo novelInfo = new NovelInfo();
+		novelInfo.setNovelUrlToken(novelUrlToken);
+		novelInfo.setDownloadFlag("1");
+		novelInfo.setUpdateTime(new Date());
+		
+		novelInfoDaoService.updateDownloadFlagByNovelUrlToken(novelInfo);
+		
 	}
 
 	public boolean isUseProxy() {

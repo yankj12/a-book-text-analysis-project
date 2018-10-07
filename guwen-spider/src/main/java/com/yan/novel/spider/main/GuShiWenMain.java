@@ -22,13 +22,47 @@ public class GuShiWenMain {
 		// guwen/book_60.aspx
 		//crawlBookFromGuShiWen("guwen/book_60.aspx");
 		// 遍历书籍信息
-		crawlAllBookInfo();
+//		crawlAllBookInfo();
+		
+		// 爬取未下载的书籍，并更新下载标志位
+		crawlUnDownloadedBooks();
 	}
-
 	
+	/**
+	 * 爬取未下载的书籍，并更新下载标志位
+	 */
+	public static void crawlUnDownloadedBooks() {
+		// 查询出未下载的书籍
+		List<NovelInfo> undownloadedBooks = findUnDownloadedBooks();
+		
+		// 循环下载书籍
+		if(undownloadedBooks != null) {
+			int index = 1;
+			for(NovelInfo novelInfo:undownloadedBooks) {
+				System.out.println(index + "/" + undownloadedBooks.size() + "," + novelInfo.getNovelName());
+				// 根据novelUrlToken去爬取书籍
+				crawlBookFromGuShiWen(novelInfo.getNovelUrlToken());
+				
+				index++;
+			}
+		}
+	}
+	
+	
+	public static List<NovelInfo> findUnDownloadedBooks(){
+		NovelCrawlService novelCrawlService = new BookCrawlServiceGuShiWenImpl();
+		// 未下载的书籍信息列表
+		List<NovelInfo> undownloadedBooks = novelCrawlService.findUnDownloadedNovels();
+		
+		return undownloadedBooks;
+	}
+	
+	// 根据novelUrlToken去爬取书籍
 	public static void crawlBookFromGuShiWen(String bookUrlToken) {
 		
 		String webRootUrl = "https://so.gushiwen.org";
+		
+		NovelCrawlService novelCrawlService = new BookCrawlServiceGuShiWenImpl();
 		
 		// 爬取数据是否正常结束
 		boolean crawlEndWithSuccess = false;
@@ -37,7 +71,6 @@ public class GuShiWenMain {
 		// 使用这种机制来处理爬取过程中因异常而中断的情况
 		while(!crawlEndWithSuccess){
 			try {
-				NovelCrawlService novelCrawlService = new BookCrawlServiceGuShiWenImpl();
 				novelCrawlService.crawlNovel(webRootUrl, bookUrlToken);
 				
 				// 如果上面的执行是以异常中断的话，应该通过循环继续处理，直到上面的方法正常结束，此时应该跳出循环
@@ -49,8 +82,12 @@ public class GuShiWenMain {
 			}
 			
 		}
+		
+		// 将书籍的downloadFlag置为1
+		novelCrawlService.updateNovelInfoDownloadFlag(bookUrlToken);
+		
 	}
-	
+		
 	/**
 	 * 爬取书籍信息
 	 */
@@ -105,6 +142,11 @@ public class GuShiWenMain {
 					
 					Element bookUrlElement = novelNameElement.select("a").first();
 					String bookUrlToken = bookUrlElement.attr("href");
+					if(bookUrlToken != null 
+							&& !"".equals(bookUrlToken.trim())
+							&& bookUrlToken.startsWith("/")) {
+						bookUrlToken = bookUrlToken.substring(1);
+					}
 					novelInfo.setNovelUrlToken(bookUrlToken);
 					
 					// 处理相对链接

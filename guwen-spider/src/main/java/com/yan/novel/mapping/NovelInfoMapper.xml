@@ -26,4 +26,24 @@
     	select * from NovelInfo where novelName = #{novelName}
     </select>
     
+    <select id="queryNovelInfosByCondition" parameterType="java.util.Map"  resultType="com.yan.novel.schema.NovelInfo">
+    	select * from NovelInfo
+    	<trim prefix="where" prefixOverrides="and|or"> 
+    		<if test="novelUrlToken != null and novelUrlToken != ''">
+    			novelUrlToken=#{novelUrlToken}
+    		</if>
+    		<if test="novelName != null and novelName != ''">
+    			and novelName=#{novelName}
+    		</if>
+    		<if test="downloadFlag != null and downloadFlag != ''">
+    			and downloadFlag=#{downloadFlag}
+    		</if>
+    	</trim>
+    	order by updateTime desc
+    </select>
+    
+    <update id="updateDownloadFlagByNovelUrlToken" parameterType="com.yan.novel.schema.NovelInfo">
+    	update NovelInfo set downloadFlag=#{downloadFlag}, updateTime=#{updateTime} where novelUrlToken = #{novelUrlToken}
+    </update>
+    
 </mapper>

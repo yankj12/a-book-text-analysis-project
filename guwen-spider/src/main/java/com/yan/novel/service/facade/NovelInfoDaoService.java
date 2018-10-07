@@ -1,6 +1,7 @@
 package com.yan.novel.service.facade;
 
 import java.util.List;
+import java.util.Map;
 
 import com.yan.novel.schema.NovelInfo;
 
@@ -16,4 +17,7 @@ public final static String MAPPER_NAME_SPACE ="com.yan.novel.mapping.NovelInfoMa
 	
 	List<NovelInfo> queryNovelInfosByNovelName(String novelName);
 	
+	List<NovelInfo> queryNovelInfosByCondition(Map<String, Object> condition);
+	
+	void updateDownloadFlagByNovelUrlToken(NovelInfo novelInfo);
 }
