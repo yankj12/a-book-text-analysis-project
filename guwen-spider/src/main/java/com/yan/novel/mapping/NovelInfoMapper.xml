@@ -4,17 +4,17 @@
 	
     <insert id="insertNovelInfo" parameterType="com.yan.novel.schema.NovelInfo">
     	insert into NovelInfo 
-    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, insertTime, updateTime) 
+    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, downloadFlag, insertTime, updateTime) 
     	values 
-    	(#{novelUrlToken}, #{novelUrl}, #{novelName}, #{authorName}, #{lastUpdateTime}, #{lastUpdateChapterFullName}, #{novelSummary}, #{insertTime}, #{updateTime})
+    	(#{novelUrlToken}, #{novelUrl}, #{novelName}, #{authorName}, #{lastUpdateTime}, #{lastUpdateChapterFullName}, #{novelSummary}, #{downloadFlag}, #{insertTime}, #{updateTime})
     </insert>
     
     <insert id="insertBathNovelInfo" parameterType="java.util.List">
     	insert into NovelInfo 
-    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, insertTime, updateTime) 
+    	(novelUrlToken, novelUrl, novelName, authorName, lastUpdateTime, lastUpdateChapterFullName, novelSummary, downloadFlag, insertTime, updateTime) 
     	values 
     	<foreach collection="list" item="item" index="index" separator=",">
-            (#{item.novelUrlToken}, #{item.novelUrl}, #{item.novelName}, #{item.authorName}, #{item.lastUpdateTime}, #{item.lastUpdateChapterFullName}, #{item.novelSummary}, #{item.insertTime}, #{item.updateTime})
+            (#{item.novelUrlToken}, #{item.novelUrl}, #{item.novelName}, #{item.authorName}, #{item.lastUpdateTime}, #{item.lastUpdateChapterFullName}, #{item.novelSummary}, #{item.downloadFlag}, #{item.insertTime}, #{item.updateTime})
         </foreach>
     </insert>
     

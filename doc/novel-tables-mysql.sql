@@ -41,3 +41,5 @@ ALTER TABLE novelchapter CHANGE COLUMN id id BIGINT NOT NULL AUTO_INCREMENT;
 -- 修改某列为自增主键
 --ALTER TABLE novelchapter CHANGE COLUMN id id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY;
 
+-- 下载标志位，0表示未下载，1表示下载完成。默认为0
+alter table NovelInfo add downloadFlag varchar(2) DEFAULT '0' after novelSummary;

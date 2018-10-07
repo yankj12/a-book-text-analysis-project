@@ -50,6 +50,8 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 		// 简介
 		String novelSummary = summaryElement.text();
 		novelInfo.setNovelSummary(novelSummary);
+		// 1 表示下载完成
+		novelInfo.setDownloadFlag("1");
 		
 		// 首先应该初始化文件夹
 		if(this.isWriteToLocal()) {

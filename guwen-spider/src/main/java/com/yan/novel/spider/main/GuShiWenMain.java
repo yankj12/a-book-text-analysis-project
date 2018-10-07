@@ -122,7 +122,7 @@ public class GuShiWenMain {
 						bookUrl = webRootUrl + bookRelativeUrl;
 					}
 					novelInfo.setNovelUrl(bookUrl);
-					
+					novelInfo.setDownloadFlag("0");
 					novelInfo.setInsertTime(new Date());
 					novelInfo.setUpdateTime(new Date());
 					

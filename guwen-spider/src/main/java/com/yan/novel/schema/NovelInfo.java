@@ -28,6 +28,9 @@ public class NovelInfo implements Serializable{
 	// 简介
 	private String novelSummary;
 
+	// 下载标志位，0表示未下载，1表示下载完成。默认0
+	private String downloadFlag;
+	
 	private Date insertTime;
 	
 	private Date updateTime;
@@ -110,6 +113,14 @@ public class NovelInfo implements Serializable{
 
 	public void setNovelUrl(String novelUrl) {
 		this.novelUrl = novelUrl;
+	}
+
+	public String getDownloadFlag() {
+		return downloadFlag;
+	}
+
+	public void setDownloadFlag(String downloadFlag) {
+		this.downloadFlag = downloadFlag;
 	}
 	
 }

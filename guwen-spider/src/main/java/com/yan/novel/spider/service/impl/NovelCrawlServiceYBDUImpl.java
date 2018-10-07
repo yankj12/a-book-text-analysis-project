@@ -45,6 +45,8 @@ public class NovelCrawlServiceYBDUImpl extends AbstrateNovelCrawlServiceImpl imp
 		// 标题
 		String novelName = novelNameElement.text();
 		novelInfo.setNovelName(novelName);
+		// 1 表示下载完成
+		novelInfo.setDownloadFlag("1");
 		
 		// 首先应该初始化文件夹
 		if(this.isWriteToLocal()) {
