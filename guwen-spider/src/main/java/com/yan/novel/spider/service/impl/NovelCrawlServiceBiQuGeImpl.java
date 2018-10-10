@@ -142,7 +142,13 @@ public class NovelCrawlServiceBiQuGeImpl extends AbstrateNovelCrawlServiceImpl i
 	 * @param chapterUrl
 	 * @return
 	 */
-	public String crawNovelChapter(String chapterUrl) {
+	public NovelChapter crawNovelChapter(String chapterUrl) {
+		NovelChapter novelChapter = new NovelChapter();
+		
+		if(chapterUrl == null || "".equals(chapterUrl.trim())){
+			return novelChapter;
+		}
+		
 		String html = this.requestUrlByGetMethod(chapterUrl);
 		// 解析html
 		// div id=content
@@ -154,7 +160,9 @@ public class NovelCrawlServiceBiQuGeImpl extends AbstrateNovelCrawlServiceImpl i
 		// 去掉章节内容中的html标签
 		chapterContent = NovelHtmlUtil.removeHtmlTags(chapterContent);
 		
-		return chapterContent;
+		novelChapter.setChapterContent(chapterContent);
+		
+		return novelChapter;
 	}
 	
 	/**

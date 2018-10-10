@@ -111,16 +111,33 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 				System.out.println("请求章节内容:" + novelChapter.getChapterFullName());
 				
 				String novelChapterUrl = novelChapter.getChapterUrl();
-				String chapterContent = "";
 				if(novelChapterUrl != null && !"".equals(novelChapterUrl.trim())){
 					try {
 						// try-catch ，避免请求html及解析过程中报错导致后续流程不走
-						chapterContent = this.crawNovelChapter(novelChapterUrl);
+						// 需要同时爬取章节的内容和章节名称。因为有些网站章节名称是截取固定长度的
+						NovelChapter chapterTmp = this.crawNovelChapter(novelChapterUrl);
+						if(chapterTmp != null){
+							if(chapterTmp.getChapterContent() != null && !"".equals(chapterTmp.getChapterContent())){
+								novelChapter.setChapterContent(chapterTmp.getChapterContent());
+							}
+							
+							if(chapterTmp.getChapterFullName() != null && !"".equals(chapterTmp.getChapterFullName())){
+								novelChapter.setChapterFullName(chapterTmp.getChapterFullName());
+							}
+							
+							if(chapterTmp.getChapterName() != null && !"".equals(chapterTmp.getChapterName())){
+								novelChapter.setChapterName(chapterTmp.getChapterName());
+							}
+							
+							if(chapterTmp.getChapterSerialName() != null && !"".equals(chapterTmp.getChapterSerialName())){
+								novelChapter.setChapterSerialName(chapterTmp.getChapterSerialName());
+							}
+							
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-				novelChapter.setChapterContent(chapterContent);
 				
 				novelChapter.setInsertTime(new Date());
 				novelChapter.setUpdateTime(new Date());
@@ -183,7 +200,7 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 	 * @param chapterUrl
 	 * @return
 	 */
-	public abstract String crawNovelChapter(String chapterUrl);
+	public abstract NovelChapter crawNovelChapter(String chapterUrl);
 	
 	/**
 	 * 通过get的方式请求一个url

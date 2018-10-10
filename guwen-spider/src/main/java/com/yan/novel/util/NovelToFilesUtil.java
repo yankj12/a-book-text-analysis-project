@@ -171,6 +171,7 @@ public class NovelToFilesUtil {
 			chapterTextFile.createNewFile();
 		}
 		// 写入内容
-		FileUtil.writeToFile(chapterTextFileName, novelChapter.getChapterContent(), "UTF-8");
+		// 三目表达式处理下，避免字符串为null的时候写入文件报错
+		FileUtil.writeToFile(chapterTextFileName, novelChapter.getChapterContent() != null?novelChapter.getChapterContent():"", "UTF-8");
 	}
 }

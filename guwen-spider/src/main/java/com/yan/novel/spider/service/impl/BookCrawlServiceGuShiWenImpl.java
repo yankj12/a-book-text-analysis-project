@@ -247,9 +247,11 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 	 * @param chapterUrl
 	 * @return
 	 */
-	public String crawNovelChapter(String chapterUrl) {
+	public NovelChapter crawNovelChapter(String chapterUrl) {
+		NovelChapter novelChapter = new NovelChapter();
+		
 		if(chapterUrl == null || "".equals(chapterUrl.trim())){
-			return "";
+			return novelChapter;
 		}
 		
 		StringBuilder article = new StringBuilder();
@@ -264,6 +266,11 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 		List<Element> divElements = element.children();
 		// 古文
 		Element articleOldElement = divElements.get(0);
+		
+		Element articleHeadElement = articleOldElement.select("div.cont > h1").first();
+		Element titleElement = articleHeadElement.select("span").first();
+		String title = titleElement.text();
+		//System.out.println(title);
 		
 		// 获取id
 		String divId = articleOldElement.attr("id");
@@ -295,7 +302,19 @@ public class BookCrawlServiceGuShiWenImpl extends AbstrateNovelCrawlServiceImpl 
 		}
 			
 		//System.out.println(chapterContent);
-		return article.toString();
+		
+		novelChapter.setChapterContent(article.toString());
+		novelChapter.setChapterFullName(title);
+		
+		String[] ary1 = title.split("\\s+");
+		if(ary1 != null && ary1.length >= 2){
+			novelChapter.setChapterSerialName(ary1[0].trim());
+			novelChapter.setChapterName(ary1[1].trim());
+		}else if(ary1 != null && ary1.length >= 1){
+			novelChapter.setChapterName(ary1[0].trim());
+		}
+		
+		return novelChapter;
 	}
 
 }
