@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yan.novel.mapping.AuthorMapper">
+	
+    <insert id="insertAuthor" parameterType="com.yan.novel.schema.Author">
+    	insert into Author 
+    	(name, summary, period, dataSource, validStatus, insertTime, updateTime) 
+    	values 
+    	(#{name}, #{summary}, #{period}, #{dataSource}, #{validStatus}, #{insertTime}, #{updateTime})
+    </insert>
+    
+    <insert id="insertBathAuthor" parameterType="java.util.List">
+    	insert into Author 
+    	(name, summary, period, dataSource, validStatus, insertTime, updateTime) 
+    	values 
+    	<foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name}, #{item.summary}, #{item.period}, #{item.dataSource}, #{item.validStatus}, #{item.insertTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+    
+    <select id="queryAuthorById" parameterType="string" resultType="com.yan.novel.schema.Author">
+    	select * from Author where id = #{id}
+    </select>
+    
+    <select id="queryAuthorsByName" parameterType="string" resultType="com.yan.novel.schema.Author">
+    	select * from Author where name = #{name}
+    </select>
+    
+    <select id="queryAuthorsByCondition" parameterType="java.util.Map"  resultType="com.yan.novel.schema.Author">
+    	select * from Author
+    	<trim prefix="where" prefixOverrides="and|or"> 
+    		<if test="id != null and id != ''">
+    			id=#{id}
+    		</if>
+    		<if test="name != null and name != ''">
+    			and name=#{name}
+    		</if>
+    		<if test="period != null and period != ''">
+    			and period=#{period}
+    		</if>
+    		<if test="dataSource != null and dataSource != ''">
+    			and dataSource=#{dataSource}
+    		</if>
+    		<if test="validStatus != null and validStatus != ''">
+    			and validStatus=#{validStatus}
+    		</if>
+    	</trim>
+    	order by updateTime asc
+    </select>
+    
+</mapper>

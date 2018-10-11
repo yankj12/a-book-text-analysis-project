@@ -16,6 +16,7 @@
     <mappers>
         <mapper resource="com/yan/novel/mapping/NovelChapterMapper.xml"/>
         <mapper resource="com/yan/novel/mapping/NovelInfoMapper.xml"/>
+        <mapper resource="com/yan/novel/mapping/AuthorMapper.xml"/>
         
     </mappers>
 </configuration>
