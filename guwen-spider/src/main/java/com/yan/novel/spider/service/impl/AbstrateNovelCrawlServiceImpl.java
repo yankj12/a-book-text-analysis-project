@@ -25,6 +25,7 @@ import com.yan.novel.service.facade.NovelChapterDaoService;
 import com.yan.novel.service.facade.NovelInfoDaoService;
 import com.yan.novel.service.impl.NovelChapterDaoServiceSpringImpl;
 import com.yan.novel.service.impl.NovelInfoDaoServiceSpringImpl;
+import com.yan.novel.util.NovelHtmlUtil;
 import com.yan.novel.util.NovelToFilesUtil;
 
 public abstract class AbstrateNovelCrawlServiceImpl{
@@ -118,7 +119,8 @@ public abstract class AbstrateNovelCrawlServiceImpl{
 						NovelChapter chapterTmp = this.crawNovelChapter(novelChapterUrl);
 						if(chapterTmp != null){
 							if(chapterTmp.getChapterContent() != null && !"".equals(chapterTmp.getChapterContent())){
-								novelChapter.setChapterContent(chapterTmp.getChapterContent());
+								String chapterContent = NovelHtmlUtil.filterEmoji(chapterTmp.getChapterContent());
+								novelChapter.setChapterContent(chapterContent);
 							}
 							
 							if(chapterTmp.getChapterFullName() != null && !"".equals(chapterTmp.getChapterFullName())){
