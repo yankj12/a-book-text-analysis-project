@@ -43,3 +43,17 @@ ALTER TABLE novelchapter CHANGE COLUMN id id BIGINT NOT NULL AUTO_INCREMENT;
 
 -- 下载标志位，0表示未下载，1表示下载完成。默认为0
 alter table NovelInfo add downloadFlag varchar(2) DEFAULT '0' after novelSummary;
+
+
+CREATE TABLE Author (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  name varchar(40) DEFAULT NULL,
+  summary TEXT DEFAULT NULL,
+  period varchar(40) DEFAULT NULL,
+  datasource varchar(20) DEFAULT NULL,
+  validStatus varchar(2) DEFAULT '1',
+  insertTime datetime DEFAULT NULL,
+  updateTime datetime DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
