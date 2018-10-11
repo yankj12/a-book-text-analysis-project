@@ -47,6 +47,7 @@ public class GuShiWenAuthorMain {
 	 */
 	public static void crawlAuthorByPeriod(String period){
 		AbstrateNovelCrawlServiceImpl novelCrawlService = new BookCrawlServiceGuShiWenImpl();
+		AuthorDaoService authorDaoService = new AuthorDaoServiceSpringImpl();
 		
 		// 书籍信息列表
 		List<Author> authors = new ArrayList<Author>();
@@ -96,6 +97,12 @@ public class GuShiWenAuthorMain {
 					author.setUpdateTime(new Date());
 					
 					authors.add(author);
+					
+					// 每100条保存一次
+					if(authors.size() % 100 == 0) {
+						authorDaoService.insertBathAuthor(authors);
+						authors.clear();
+					}
 				}
 			}
 			
@@ -104,9 +111,9 @@ public class GuShiWenAuthorMain {
 		}
 		
 		// 保存作者
-		AuthorDaoService authorDaoService = new AuthorDaoServiceSpringImpl();
-		authorDaoService.insertBathAuthor(authors);
-		
+		if(authors.size() > 0) {
+			authorDaoService.insertBathAuthor(authors);
+		}
 	}
 	
 }
