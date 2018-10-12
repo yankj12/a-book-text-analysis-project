@@ -50,9 +50,11 @@ workDir
 |---|---|---|
 |id|主键|string|
 |name|姓名|string|
+|authorCode|作者代码|string|
 |summary|简介|string|
 |period|时期|string|
 |datasource|数据来源|string|
+|masterAuthorId|主作者id，用于将多条作者记录合并为一条作者记录|string|
 |validStatus|有效状态|string|
 |insertTime|插入时间|date|
 |updateTime|修改时间|date|
