@@ -57,3 +57,10 @@ CREATE TABLE Author (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- 作者代码
+alter table Author add authorCode varchar(40) DEFAULT NULL after name;
+-- 主作者id，主要用于将多条作者记录合并为一条记录
+alter table Author add masterAuthorId BIGINT DEFAULT NULL after datasource;
+
+
+

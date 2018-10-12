@@ -86,6 +86,21 @@ public class GuShiWenAuthorMain {
 					String name = nameElement.text();
 					System.out.println(pageNo + "/" + totalPage + "," + name);
 					
+					// javascript:PlayAuthor(247)
+					List<Element> aElements = nameElement.select("a");
+					if(aElements != null){
+						for(Element aElement:aElements){
+							String href = aElement.attr("href");
+							if(href != null && href.startsWith("javascript:PlayAuthor(")){
+								// 正则表达式左边的括号需要转义，否则会认为是组
+								String authorCode = href.replaceAll("javascript:PlayAuthor\\(", "").replace(")", "");
+								author.setAuthorCode(authorCode);
+								
+								break;
+							}
+						}
+					}
+					
 					author.setName(name);
 					// 简介
 					String summary = summaryElement.text();

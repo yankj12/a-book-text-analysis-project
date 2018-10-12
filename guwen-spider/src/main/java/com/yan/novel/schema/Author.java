@@ -13,6 +13,9 @@ public class Author implements Serializable{
 	// 姓名
 	private String name;
 	
+	// 作者代码
+	private String authorCode;
+	
 	// 简介
 	private String summary;
 	
@@ -21,6 +24,10 @@ public class Author implements Serializable{
 	
 	// 数据来源
 	private String dataSource;
+	
+	// 主作者id
+	// 用于将多条作者记录合并为一条作者记录
+	private String masterAuthorId;
 	
 	// 有效状态
 	private String validStatus;
@@ -94,4 +101,21 @@ public class Author implements Serializable{
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public String getAuthorCode() {
+		return authorCode;
+	}
+
+	public void setAuthorCode(String authorCode) {
+		this.authorCode = authorCode;
+	}
+
+	public String getMasterAuthorId() {
+		return masterAuthorId;
+	}
+
+	public void setMasterAuthorId(String masterAuthorId) {
+		this.masterAuthorId = masterAuthorId;
+	}
+	
 }

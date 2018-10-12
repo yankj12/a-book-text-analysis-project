@@ -4,17 +4,17 @@
 	
     <insert id="insertAuthor" parameterType="com.yan.novel.schema.Author">
     	insert into Author 
-    	(name, summary, period, dataSource, validStatus, insertTime, updateTime) 
+    	(name, authorCode, summary, period, dataSource, masterAuthorId, validStatus, insertTime, updateTime) 
     	values 
-    	(#{name}, #{summary}, #{period}, #{dataSource}, #{validStatus}, #{insertTime}, #{updateTime})
+    	(#{name}, #{authorCode}, #{summary}, #{period}, #{dataSource}, #{masterAuthorId}, #{validStatus}, #{insertTime}, #{updateTime})
     </insert>
     
     <insert id="insertBathAuthor" parameterType="java.util.List">
     	insert into Author 
-    	(name, summary, period, dataSource, validStatus, insertTime, updateTime) 
+    	(name, authorCode, summary, period, dataSource, masterAuthorId, validStatus, insertTime, updateTime) 
     	values 
     	<foreach collection="list" item="item" index="index" separator=",">
-            (#{item.name}, #{item.summary}, #{item.period}, #{item.dataSource}, #{item.validStatus}, #{item.insertTime}, #{item.updateTime})
+            (#{item.name}, #{item.authorCode}, #{item.summary}, #{item.period}, #{item.dataSource}, #{item.masterAuthorId}, #{item.validStatus}, #{item.insertTime}, #{item.updateTime})
         </foreach>
     </insert>
     
@@ -35,11 +35,17 @@
     		<if test="name != null and name != ''">
     			and name=#{name}
     		</if>
+    		<if test="authorCode != null and authorCode != ''">
+    			and authorCode=#{authorCode}
+    		</if>
     		<if test="period != null and period != ''">
     			and period=#{period}
     		</if>
     		<if test="dataSource != null and dataSource != ''">
     			and dataSource=#{dataSource}
+    		</if>
+    		<if test="masterAuthorId != null and masterAuthorId != ''">
+    			and masterAuthorId=#{masterAuthorId}
     		</if>
     		<if test="validStatus != null and validStatus != ''">
     			and validStatus=#{validStatus}
